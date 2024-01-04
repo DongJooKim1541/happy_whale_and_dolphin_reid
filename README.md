@@ -3,7 +3,7 @@
 
 
 
-## 활용 기술
+## Stack
 ```
 Python  
 CNN(Convolutional Neural Network)
