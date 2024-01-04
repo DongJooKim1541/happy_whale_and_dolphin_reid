@@ -37,10 +37,36 @@ Pytorch
 
 ## 3. Re-identification & performance evaluation
 
+3-1 Overall framework
+
+- 총 4단계로 구성
+
+<img src = "./figures/Overall framework.PNG" width="80%"><br/><br/>
+
+3-2 Overall framework
+
+- 
+
+<img src = "./figures/Network structure.PNG" width="80%"><br/><br/>
+
+<img src = "./figures/Make Gallery.PNG" width="80%"><br/><br/>
+
+<img src = "./figures/Make Gallery2.PNG" width="80%"><br/><br/>
+
+<img src = "./figures/Performance Evaluation.PNG" width="80%"><br/><br/>
+
+<img src = "./figures/Performance Evaluation2.PNG" width="80%"><br/><br/>
+
+<img src = "./figures/Performance Evaluation3.PNG" width="80%"><br/><br/>
+
+<img src = "./figures/Performance Evaluation4.PNG" width="80%"><br/><br/>
+
 ## 4. Conclusion
 
+- aa
 
 
+<img src = "./figures/Test for Kaggle submission.PNG" width="80%">
 
 
 
