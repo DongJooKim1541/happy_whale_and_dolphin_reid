@@ -43,7 +43,17 @@ Pytorch
 
 <img src = "./figures/Overall framework.PNG" width="80%"><br/><br/>
 
-3-2 Overall framework
+3-2 Training settings
+```
+ResNet-18 & EfficientNet
+Input: Anchor, positive, negative data (224 x 224 images)
+Output: 512 dim
+Triplet loss, Cross-entropy loss
+Adam optimizer, lr 0.0001, 300 epoch training
+Metric: MAP@5
+```
+
+3-3 Network structure
 
 - 
 
