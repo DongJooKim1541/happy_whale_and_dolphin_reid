@@ -16,6 +16,20 @@ Pytorch
 - 고래 및 돌고래 등의 개체 사진 활용
 - 새롭게 찍힌 사진에 나타나는 개체가 기존에 수집했던 자료 중 어떤 개체와 일치하는지 판정
 
+## Running the Code
+To train model.
+```
+train.py
+```
+To evaluate model and make gallery set.
+```
+test.py
+```
+To evaluate MAP@5 and make gallery set for hard mining settings. 
+```
+main_hard_mining.py
+```
+
 ## 1. Dataset
 [해양 포유류 데이터](https://www.kaggle.com/competitions/happy-whale-and-dolphin/)를 활용하여 인공지능 모델 학습
 
