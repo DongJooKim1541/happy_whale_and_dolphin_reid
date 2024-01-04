@@ -24,10 +24,16 @@ Pytorch
 
 <img src = "./figures/clip_seg.PNG" width="65%"><br/><br/>
 
+- Original image를 resize하여 W,H가 같은 image 생성
+- 해당 image에 segmentation 수행하여 min, max 좌표 획득
+- Resize했던 비율을 역이용하여 original image의 bounding box 좌표 획득
 
+<img src = "./figures/clip_seg2.PNG" width="80%"><br/><br/>
 
-<img src = "./figures/clip_seg2.PNG" width="70%"><br/><br/>
-<img src = "./figures/clip_seg3.PNG" width="70%"><br/><br/>
+- Original image의 객체와 배경의 비율을 맞추기 위해 zero padding을 사용하여 crop을 하거나 image를 붙여 crop
+- 인공지능 모델의 입력 size를 맞추기 위해 resize 수행
+
+<img src = "./figures/clip_seg3.PNG" width="80%"><br/><br/>
 
 ## 3. Re-identification & performance evaluation
 
