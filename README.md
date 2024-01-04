@@ -8,6 +8,7 @@
 Python  
 CNN(Convolutional Neural Network)
 Segmentation
+K-Nearest neighborhood
 Pytorch
 ```
 
