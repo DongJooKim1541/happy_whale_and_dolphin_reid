@@ -92,7 +92,7 @@ Metric: MAP@5
 
 <img src = "./figures/Performance Evaluation4.PNG" width="80%"><br/><br/>
 
-## 4. Tests for Kaggle submission
+## 4. Kaggle submission results
 
 - new_indivisual이란 기존 gallery에 있던 개체가 아닌 새로운 개체라고 식별되었을 때 기록
 - Re-identification task를 수행한 결과가 더 좋음을 확인할 수 있음
