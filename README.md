@@ -81,7 +81,7 @@ Metric: MAP@5
 
 - 학습이 끝난 뒤 수행
 - 모든 train dataset을 parameter가 고정된 network에 통과시켜 features 생성
-- 같은 id의 개체 이미지들을 묶어 gallery set 생성
+- 같은 id의 개체 이미지 feature들을 묶어 gallery set 생성
 
 <img src = "./figures/Make Gallery.PNG" width="80%"><br/><br/>
 
