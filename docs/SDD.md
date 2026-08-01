@@ -302,9 +302,9 @@ Contribution: 1/1 + 0 + 1/3 + 0 + 0 = 1.333
 | Hard negative mining | `src/main_hard_mining.py`, `src/utils/metrics.py:hard_negative_mining` |
 | Gallery creation | `src/test.py:make_gallery()` |
 | MAP@5 evaluation | `src/test.py:evaluate()`, `src/utils/metrics.py:calculate_map()` |
-| Multi-task learning (triplet + CE) | `src/train.py:train_epoch()` line 74-75 |
+| Multi-task learning (triplet + CE) | `src/train.py:train_epoch()` line 103-104 |
 | ResNet18 backbone | `src/models/resnet_triplet.py:ResNetTriplet` |
-| 30-way species classification | `src/models/resnet_triplet.py` line 22 |
+| 30-way species classification | `src/models/resnet_triplet.py:ResNetTriplet` line 52 |
 
 ---
 
