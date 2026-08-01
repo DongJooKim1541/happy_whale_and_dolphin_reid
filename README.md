@@ -38,7 +38,6 @@
 ```
 happy_whale_and_dolphin_reid/
 ├── README.md                    (본 파일, 한글)
-├── README_en.md                 (영문 원본)
 ├── LICENSE
 ├── .gitignore
 ├── requirements.txt
