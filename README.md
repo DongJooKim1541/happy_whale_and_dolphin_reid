@@ -382,14 +382,6 @@ cuda_visible_devices = "1,2,3"
 
 ---
 
-## 포스터
-
-프로젝트 포스터입니다:
-
-![프로젝트 포스터](figures/poster.png)
-
----
-
 ## 인용
 
 본 프로젝트를 사용하는 경우 다음과 같이 인용해주세요:
@@ -432,7 +424,6 @@ cuda_visible_devices = "1,2,3"
 ## 문의
 
 질문이나 이슈가 있으신 경우:
-- **GitHub Issues:** [프로젝트 저장소](https://github.com/DongJooKim1541/happy_whale_and_dolphin_reid)
 - **이메일:** dongjookim1541@gmail.com
 
 ---
