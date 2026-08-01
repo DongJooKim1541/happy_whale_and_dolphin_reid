@@ -57,9 +57,6 @@ happy_whale_and_dolphin_reid/
 ├── docs/
 │   ├── SDD.md                   (소프트웨어 설계 문서)
 │   └── TC.md                    (테스트 케이스)
-├── train_list.csv               (훈련 데이터셋 메타데이터)
-├── val_list.csv                 (검증 데이터셋 메타데이터)
-├── all_list.csv                 (전체 데이터셋 메타데이터)
 └── src/
     ├── config.py                (하이퍼파라미터 및 설정)
     ├── train.py                 (훈련 스크립트)
