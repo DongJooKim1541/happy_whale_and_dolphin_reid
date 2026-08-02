@@ -272,23 +272,22 @@ Contribution: 1/1 + 0 + 1/3 + 0 + 0 = 1.333
 
 ## 8. 알려진 한계 & 설계 결정사항
 
-### 8.1 GPU 고정
-- `cuda_visible_devices`를 수동으로 설정해야 함 (config.py:18)
-- 자동 device 선택 로직 추가 권장
+### 8.1 GPU 설정
+- `CUDA_VISIBLE_DEVICES` 환경변수로 제어 (config.py)
+- 기본값: "0" (첫 번째 GPU)
+- 예: `export CUDA_VISIBLE_DEVICES=0,1,2` (멀티 GPU 사용)
 
 ### 8.2 Margin 값
 - Config에서 0.0001이지만, 논문 ablation에서 margin=0 (사용하지 않음)이 더 좋다고 함
 - 현재는 Config 값으로 통일
 
-### 8.3 Wandb 라이브러리
-- 코드에는 import되었으나 미사용
-- 향후 실험 추적을 위해 활성화 고려
+### 8.3 데이터 경로 설정
+- 모든 경로가 환경변수로 설정 가능함 (config.py)
+- 기본값: 프로젝트 루트 상대 경로
+- 환경변수 미설정 시 기본값 사용
+- `.env` 파일 또는 `export` 명령으로 설정 가능
 
-### 8.4 이미지 경로
-- 현재는 하드코딩된 로컬 경로 가정
-- 환경변수 기반 경로 관리 권장
-
-### 8.5 Triplet 동적 생성
+### 8.4 Triplet 동적 생성
 - 매 epoch마다 새로운 triplet 생성 (메모리 오버헤드)
 - 대신 학습 다양성 향상
 
@@ -338,8 +337,8 @@ python -m src.test
 | 2 | margin 불일치 (train.py 0.1 vs Config 0.0001) | Config 값(0.0001)으로 통일 |
 | 3 | embeding_fc 오타 | embedding_fc로 수정 |
 | 4 | ResNet18/34/50/101 중복 코드 | 제너릭 ResNetTriplet으로 통합 |
-| 5 | 하드코딩된 GPU ID | config.cuda_visible_devices로 중앙화 |
-| 6 | 하드코딩된 데이터 경로 | config.py에서 설정 가능하도록 수정 |
+| 5 | GPU ID 하드코딩 | CUDA_VISIBLE_DEVICES 환경변수로 중앙화 |
+| 6 | 데이터 경로 하드코딩 | 환경변수 기반 설정으로 개선 (config.py) |
 
 ---
 

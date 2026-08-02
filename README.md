@@ -105,6 +105,74 @@ mkdir -p dataset/train dataset/valid weight output
 python -c "import torch; print(f'PyTorch {torch.__version__}'); print(f'CUDA available: {torch.cuda.is_available()}')"
 ```
 
+### 환경변수 설정
+
+프로젝트는 `.env` 파일을 통한 환경변수 설정을 지원합니다. 프로젝트 루트에 `.env` 파일을 생성하여 다음과 같이 설정할 수 있습니다:
+
+```bash
+# .env 파일 예시
+# 훈련 설정
+BATCH_SIZE=64
+NUM_TRAIN_TRIPLETS=40000
+NUM_VALID_TRIPLETS=20000
+MARGIN=0.0001
+EPOCHS=100
+LEARNING_RATE=0.0001
+WEIGHT_DECAY=0.0
+
+# 모델 설정
+EMBEDDING_DIMENSION=512
+NUM_CLASSES=30
+
+# GPU 설정
+CUDA_VISIBLE_DEVICES=0
+DEVICE_ORDER=PCI_BUS_ID
+
+# 데이터 경로 설정
+TRAIN_ROOT_DIR=./dataset/train
+VALID_ROOT_DIR=./dataset/valid
+TRAIN_CSV_NAME=./train_list.csv
+VALID_CSV_NAME=./val_list.csv
+ALL_CSV_NAME=./all_list.csv
+
+# 출력 경로
+WEIGHT_DIR=./weight
+OUTPUT_DIR=./output
+
+# 평가 설정
+MAP_K=5
+```
+
+**주요 환경변수 설명:**
+
+| 변수명 | 기본값 | 설명 |
+|-------|-------|------|
+| `BATCH_SIZE` | 64 | 배치 크기 |
+| `MARGIN` | 0.0001 | Triplet Loss 마진 |
+| `EPOCHS` | 100 | 훈련 에포크 수 |
+| `LEARNING_RATE` | 0.0001 | Adam optimizer 학습률 |
+| `EMBEDDING_DIMENSION` | 512 | 출력 임베딩 차원 |
+| `CUDA_VISIBLE_DEVICES` | 0 | 사용할 GPU ID (예: 0,1,2 for multiple GPUs) |
+| `TRAIN_ROOT_DIR` | ./dataset/train | 훈련 이미지 디렉토리 |
+| `VALID_ROOT_DIR` | ./dataset/valid | 검증 이미지 디렉토리 |
+| `WEIGHT_DIR` | ./weight | 체크포인트 저장 경로 |
+| `OUTPUT_DIR` | ./output | 출력 파일 저장 경로 |
+
+**예시:**
+```bash
+# GPU 메모리 부족 시
+export BATCH_SIZE=32
+
+# 여러 GPU 사용
+export CUDA_VISIBLE_DEVICES=0,1,2
+
+# 커스텀 데이터셋 경로
+export TRAIN_ROOT_DIR=/data/whale_train
+export VALID_ROOT_DIR=/data/whale_valid
+```
+
+환경변수를 설정하지 않으면 기본값이 자동으로 사용됩니다.
+
 ---
 
 ## 데이터셋
