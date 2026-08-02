@@ -1,4 +1,5 @@
 import os
+from typing import Tuple
 import torch
 import numpy as np
 from tqdm import tqdm
@@ -14,7 +15,8 @@ from utils import knn, calculate_map
 
 
 @torch.no_grad()
-def make_gallery(model, gallery_dataloader, device):
+def make_gallery(model: torch.nn.Module, gallery_dataloader: torch.utils.data.DataLoader,
+                 device: torch.device) -> Tuple[torch.Tensor, np.ndarray]:
     """Create gallery embeddings from training set.
 
     Args:
@@ -43,7 +45,9 @@ def make_gallery(model, gallery_dataloader, device):
 
 
 @torch.no_grad()
-def evaluate(model, gallery_embeddings, gallery_ids, valid_dataloader, device, margin=0.1):
+def evaluate(model: torch.nn.Module, gallery_embeddings: torch.Tensor, gallery_ids: np.ndarray,
+             valid_dataloader: torch.utils.data.DataLoader, device: torch.device,
+             margin: float = 0.1) -> Tuple[float, int, int]:
     """Evaluate model on validation set using MAP@K metric.
 
     Args:
