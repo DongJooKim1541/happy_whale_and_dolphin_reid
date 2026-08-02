@@ -148,15 +148,24 @@ MAP_K=5
 | 변수명 | 기본값 | 설명 |
 |-------|-------|------|
 | `BATCH_SIZE` | 64 | 배치 크기 |
+| `NUM_TRAIN_TRIPLETS` | 40000 | 훈련 Triplet 쌍 개수 |
+| `NUM_VALID_TRIPLETS` | 20000 | 검증 Triplet 쌍 개수 |
 | `MARGIN` | 0.0001 | Triplet Loss 마진 |
 | `EPOCHS` | 100 | 훈련 에포크 수 |
-| `LEARNING_RATE` | 0.0001 | Adam optimizer 학습률 |
+| `LEARNING_RATE` | 1e-4 | Adam optimizer 학습률 |
+| `WEIGHT_DECAY` | 0.0 | L2 정규화 계수 |
 | `EMBEDDING_DIMENSION` | 512 | 출력 임베딩 차원 |
+| `NUM_CLASSES` | 30 | 동물 개체 클래스 수 |
+| `DEVICE_ORDER` | PCI_BUS_ID | GPU 디바이스 순서 지정 방식 |
 | `CUDA_VISIBLE_DEVICES` | 0 | 사용할 GPU ID (예: 0,1,2 for multiple GPUs) |
 | `TRAIN_ROOT_DIR` | ./dataset/train | 훈련 이미지 디렉토리 |
 | `VALID_ROOT_DIR` | ./dataset/valid | 검증 이미지 디렉토리 |
+| `TRAIN_CSV_NAME` | ./train_list.csv | 훈련 데이터 메타데이터 CSV |
+| `VALID_CSV_NAME` | ./val_list.csv | 검증 데이터 메타데이터 CSV |
+| `ALL_CSV_NAME` | ./all_list.csv | 전체 데이터 메타데이터 CSV |
 | `WEIGHT_DIR` | ./weight | 체크포인트 저장 경로 |
 | `OUTPUT_DIR` | ./output | 출력 파일 저장 경로 |
+| `MAP_K` | 5 | Mean Average Precision @ K 계산 K값 |
 
 **예시:**
 ```bash
