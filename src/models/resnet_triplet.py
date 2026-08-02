@@ -1,8 +1,8 @@
+from typing import Tuple
 import torch
 import torch.nn as nn
 from torch.nn import functional as F
 from torchvision.models import resnet18, resnet34, resnet50, resnet101
-import torch
 
 
 class ResNetTriplet(nn.Module):
@@ -12,7 +12,8 @@ class ResNetTriplet(nn.Module):
     Outputs both embedding (512-dim feature) and species classification (30-way).
     """
 
-    def __init__(self, model_name="resnet18", embedding_dimension=512, num_classes=30, pretrained=True):
+    def __init__(self, model_name: str = "resnet18", embedding_dimension: int = 512,
+                 num_classes: int = 30, pretrained: bool = True) -> None:
         """
         Args:
             model_name (str): ResNet variant ('resnet18', 'resnet34', 'resnet50', 'resnet101')
@@ -51,7 +52,7 @@ class ResNetTriplet(nn.Module):
         # Species classification head
         self.classifier = nn.Linear(embedding_dimension, num_classes)
 
-    def forward(self, images):
+    def forward(self, images: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
         """Forward pass to output embedding and species prediction.
 
         Args:
@@ -71,7 +72,8 @@ class ResNetTriplet(nn.Module):
 class EfficientNetTriplet(nn.Module):
     """EfficientNet-based triplet network for whale/dolphin re-identification."""
 
-    def __init__(self, embedding_dimension=64, num_classes=30, pretrained=True):
+    def __init__(self, embedding_dimension: int = 64, num_classes: int = 30,
+                 pretrained: bool = True) -> None:
         """
         Args:
             embedding_dimension (int): Output embedding dimension (default: 64)
@@ -99,7 +101,7 @@ class EfficientNetTriplet(nn.Module):
         self.embedding_fc = nn.Linear(256, embedding_dimension, bias=False)
         self.classifier = nn.Linear(embedding_dimension, num_classes)
 
-    def forward(self, images):
+    def forward(self, images: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
         """Forward pass to output embedding and species prediction."""
         h = self.model(images)
         embedding = self.embedding_fc(h)

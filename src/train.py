@@ -1,5 +1,6 @@
 import os
 import sys
+from typing import Tuple, Dict, Any
 import torch
 import torch.nn as nn
 import numpy as np
@@ -16,7 +17,7 @@ from data.whale_dataset import get_dataloaders
 from utils import TripletLoss, ensure_output_dirs
 
 
-def forward_pass(imgs, model):
+def forward_pass(imgs: torch.Tensor, model: nn.Module) -> Tuple[torch.Tensor, torch.Tensor]:
     """Forward pass through model.
 
     Args:
@@ -32,7 +33,9 @@ def forward_pass(imgs, model):
     return embeddings, preds
 
 
-def knn_hard_negatives(gallery_embeddings, gallery_ids, anchor_embeddings, anchor_ids, k=1):
+def knn_hard_negatives(gallery_embeddings: torch.Tensor, gallery_ids: np.ndarray,
+                       anchor_embeddings: torch.Tensor, anchor_ids: np.ndarray,
+                       k: int = 1) -> torch.Tensor:
     """Select hard negatives using KNN.
 
     Args:
@@ -69,7 +72,9 @@ def knn_hard_negatives(gallery_embeddings, gallery_ids, anchor_embeddings, ancho
     return hard_negative_embeddings
 
 
-def train_epoch(model, optimizer, dataloader, triplet_loss, ce_loss, device):
+def train_epoch(model: nn.Module, optimizer: torch.optim.Optimizer,
+                dataloader: torch.utils.data.DataLoader, triplet_loss: nn.Module,
+                ce_loss: nn.Module, device: torch.device) -> Tuple[float, float, float]:
     """Train for one epoch.
 
     Args:

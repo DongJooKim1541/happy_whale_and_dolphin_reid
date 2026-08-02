@@ -6,6 +6,7 @@ to encourage the model to learn more discriminative features.
 
 import os
 import sys
+from typing import Tuple
 import torch
 import torch.nn as nn
 import numpy as np
@@ -22,13 +23,15 @@ from data.whale_dataset import get_dataloaders
 from utils import TripletLoss, knn, calculate_map, ensure_output_dirs
 
 
-def forward_pass(imgs, model):
+def forward_pass(imgs: torch.Tensor, model: nn.Module) -> Tuple[torch.Tensor, torch.Tensor]:
     """Forward pass through model."""
     embeddings, preds = model(imgs)
     return embeddings, preds
 
 
-def select_hard_negatives(gallery_embeddings, gallery_ids, anchor_embeddings, anchor_ids, k=1):
+def select_hard_negatives(gallery_embeddings: torch.Tensor, gallery_ids: np.ndarray,
+                          anchor_embeddings: torch.Tensor, anchor_ids: np.ndarray,
+                          k: int = 1) -> torch.Tensor:
     """Select hard negatives using KNN.
 
     Hard negative: closest sample with different individual_id
@@ -55,7 +58,9 @@ def select_hard_negatives(gallery_embeddings, gallery_ids, anchor_embeddings, an
     return hard_negatives
 
 
-def train_epoch_hard_mining(model, optimizer, dataloader, triplet_loss, ce_loss, device):
+def train_epoch_hard_mining(model: nn.Module, optimizer: torch.optim.Optimizer,
+                            dataloader: torch.utils.data.DataLoader, triplet_loss: nn.Module,
+                            ce_loss: nn.Module, device: torch.device) -> Tuple[float, float, float]:
     """Train one epoch with hard negative mining.
 
     Args:

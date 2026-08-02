@@ -1,6 +1,6 @@
 import torch
 import numpy as np
-from typing import Tuple, List, Union
+from typing import Tuple, List, Union, Any
 
 
 def knn(gallery: torch.Tensor, query: torch.Tensor, k: int = 5) -> Tuple[torch.Tensor, torch.Tensor]:
@@ -42,7 +42,7 @@ def calculate_map(gallery_ids: Union[np.ndarray, List], pred_ids: Union[np.ndarr
 
 
 def hard_negative_mining(embeddings: torch.Tensor, individual_ids: Union[torch.Tensor, np.ndarray],
-                         k: int = 1) -> List[torch.Tensor]:
+                         k: int = 1) -> List[Any]:
     """Hard negative mining: select hard negatives for each anchor."""
     num_samples = len(embeddings)
     hard_negative_indices = []

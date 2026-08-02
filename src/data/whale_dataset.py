@@ -93,12 +93,13 @@ class TripletWhaleDataset(Dataset):
 
         return sample
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.training_triplets)
 
 
-def get_dataloaders(train_root_dir, valid_root_dir, train_csv_name, valid_csv_name,
-                    num_train_triplets, num_valid_triplets, batch_size, num_workers):
+def get_dataloaders(train_root_dir: str, valid_root_dir: str, train_csv_name: str,
+                    valid_csv_name: str, num_train_triplets: int, num_valid_triplets: int,
+                    batch_size: int, num_workers: int) -> Dict[str, DataLoader]:
     """Create train, validation, and gallery dataloaders.
 
     Returns:
