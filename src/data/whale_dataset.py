@@ -1,8 +1,9 @@
 import os
+from typing import Optional, Dict, List, Tuple, Callable, Any
 import numpy as np
 import pandas as pd
 import torch
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
 from torchvision.datasets.folder import pil_loader
 
@@ -10,7 +11,8 @@ from torchvision.datasets.folder import pil_loader
 class TripletWhaleDataset(Dataset):
     """Whale/dolphin re-identification dataset with triplet sampling."""
 
-    def __init__(self, root_dir, csv_name, num_triplets, transform=None, train=True):
+    def __init__(self, root_dir: str, csv_name: str, num_triplets: int,
+                 transform: Optional[Callable] = None, train: bool = True) -> None:
         """
         Args:
             root_dir (str): Root directory containing images
@@ -26,12 +28,12 @@ class TripletWhaleDataset(Dataset):
         self.train = train
         self.training_triplets = self.generate_triplets()
 
-    def generate_triplets(self):
+    def generate_triplets(self) -> List[List[Any]]:
         """Generate triplet samples (anchor, positive, negative)."""
 
-        def make_whale_class_dict(df):
+        def make_whale_class_dict(df: pd.DataFrame) -> Dict[str, List[Tuple[str, str, str]]]:
             """Create dict mapping individual_id -> [(id, image_path, species), ...]"""
-            whale_classes = {}
+            whale_classes: Dict[str, List[Tuple[str, str, str]]] = {}
             for idx, row in df.iterrows():
                 individual_id = row['individual_id']
                 if individual_id not in whale_classes:
@@ -66,7 +68,7 @@ class TripletWhaleDataset(Dataset):
 
         return triplets
 
-    def __getitem__(self, idx):
+    def __getitem__(self, idx: int) -> Dict[str, Any]:
         """Return triplet sample."""
         individual_id, anchor_image, positive_image, anchor_species, positive_species = self.training_triplets[idx]
 
