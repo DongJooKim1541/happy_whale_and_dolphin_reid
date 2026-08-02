@@ -1,34 +1,50 @@
+"""Configuration with environment variable support"""
+import os
+from pathlib import Path
 from torch.nn import PairwiseDistance
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 # Training configuration
-batch_size = 64
-num_train_triplets = 40000
-num_valid_triplets = 20000
-margin = 0.0001
-epochs = 100
-learning_rate = 1e-4
-weight_decay = 0.0
+batch_size = int(os.getenv("BATCH_SIZE", "64"))
+num_train_triplets = int(os.getenv("NUM_TRAIN_TRIPLETS", "40000"))
+num_valid_triplets = int(os.getenv("NUM_VALID_TRIPLETS", "20000"))
+margin = float(os.getenv("MARGIN", "0.0001"))
+epochs = int(os.getenv("EPOCHS", "100"))
+learning_rate = float(os.getenv("LEARNING_RATE", "1e-4"))
+weight_decay = float(os.getenv("WEIGHT_DECAY", "0.0"))
 
 # Model configuration
-embedding_dimension = 512
-num_classes = 30  # whale/dolphin species
+embedding_dimension = int(os.getenv("EMBEDDING_DIMENSION", "512"))
+num_classes = int(os.getenv("NUM_CLASSES", "30"))
 
 # GPU
-device_order = "PCI_BUS_ID"
-cuda_visible_devices = "0"  # Default to GPU 0
+device_order = os.getenv("DEVICE_ORDER", "PCI_BUS_ID")
+cuda_visible_devices = os.getenv("CUDA_VISIBLE_DEVICES", "0")
 
-# Data paths (can be overridden by environment variables)
-train_root_dir = "./dataset/train/"
-valid_root_dir = "./dataset/valid/"
-train_csv_name = "./train_list.csv"
-valid_csv_name = "./val_list.csv"
-all_csv_name = "./all_list.csv"
+# Data paths
+PROJECT_ROOT = Path(__file__).parent.parent.parent
+train_root_dir = Path(os.getenv("TRAIN_ROOT_DIR", str(PROJECT_ROOT / "dataset" / "train")))
+valid_root_dir = Path(os.getenv("VALID_ROOT_DIR", str(PROJECT_ROOT / "dataset" / "valid")))
+train_csv_name = Path(os.getenv("TRAIN_CSV_NAME", str(PROJECT_ROOT / "train_list.csv")))
+valid_csv_name = Path(os.getenv("VALID_CSV_NAME", str(PROJECT_ROOT / "val_list.csv")))
+all_csv_name = Path(os.getenv("ALL_CSV_NAME", str(PROJECT_ROOT / "all_list.csv")))
 
 # Checkpoint paths
-weight_dir = "./weight/"
-output_dir = "./output/"
+weight_dir = Path(os.getenv("WEIGHT_DIR", str(PROJECT_ROOT / "weight")))
+output_dir = Path(os.getenv("OUTPUT_DIR", str(PROJECT_ROOT / "output")))
 
 # Metrics
-map_k = 5  # MAP@K metric
+map_k = int(os.getenv("MAP_K", "5"))
 
 l2_distance = PairwiseDistance(p=2)
+
+
+def ensure_directories_exist() -> None:
+    """Create required directories if they don't exist."""
+    weight_dir.mkdir(parents=True, exist_ok=True)
+    output_dir.mkdir(parents=True, exist_ok=True)
