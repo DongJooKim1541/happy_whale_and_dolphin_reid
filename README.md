@@ -154,18 +154,27 @@ MAP_K=5
 | `EPOCHS` | 100 | 훈련 에포크 수 |
 | `LEARNING_RATE` | 1e-4 | Adam optimizer 학습률 |
 | `WEIGHT_DECAY` | 0.0 | L2 정규화 계수 |
+| `CE_LOSS_WEIGHT` | 0.01 | 종 분류 CE 항의 가중치 (`total = CE_LOSS_WEIGHT × CE + triplet`) |
+| `HARD_NEGATIVES_PER_ANCHOR` | 1 | 앵커당 검사할 hard negative 후보 배수. 후보 수는 `k × batch_size`이며 갤러리 크기로 clamp된다 |
+| `NEW_ID_THRESHOLD` | 0.1 | 이 거리를 넘으면 신규 개체(`new_id`)로 판정 |
+| `NUM_WORKERS` | Windows 0, 그 외 4 | DataLoader 워커 프로세스 수 |
+| `MODEL_NAME` | resnet18 | 백본 (`resnet18` / `resnet34` / `resnet50` / `resnet101`) |
+| `PRETRAINED` | 1 | ImageNet 사전학습 가중치 사용 여부 (0이면 랜덤 초기화) |
 | `EMBEDDING_DIMENSION` | 512 | 출력 임베딩 차원 |
-| `NUM_CLASSES` | 30 | 동물 개체 클래스 수 |
+| `NUM_CLASSES` | 30 | 종 분류 헤드의 클래스 수 |
 | `DEVICE_ORDER` | PCI_BUS_ID | GPU 디바이스 순서 지정 방식 |
 | `CUDA_VISIBLE_DEVICES` | 0 | 사용할 GPU ID (예: 0,1,2 for multiple GPUs) |
-| `TRAIN_ROOT_DIR` | ./dataset/train | 훈련 이미지 디렉토리 |
-| `VALID_ROOT_DIR` | ./dataset/valid | 검증 이미지 디렉토리 |
-| `TRAIN_CSV_NAME` | ./train_list.csv | 훈련 데이터 메타데이터 CSV |
-| `VALID_CSV_NAME` | ./val_list.csv | 검증 데이터 메타데이터 CSV |
-| `ALL_CSV_NAME` | ./all_list.csv | 전체 데이터 메타데이터 CSV |
-| `WEIGHT_DIR` | ./weight | 체크포인트 저장 경로 |
-| `OUTPUT_DIR` | ./output | 출력 파일 저장 경로 |
+| `TRAIN_ROOT_DIR` | `<project>/dataset/train` | 훈련 이미지 디렉토리 |
+| `VALID_ROOT_DIR` | `<project>/dataset/valid` | 검증 이미지 디렉토리 |
+| `TRAIN_CSV_NAME` | `<project>/train_list.csv` | 훈련 데이터 메타데이터 CSV |
+| `VALID_CSV_NAME` | `<project>/val_list.csv` | 검증 데이터 메타데이터 CSV |
+| `ALL_CSV_NAME` | `<project>/all_list.csv` | 전체 데이터 메타데이터 CSV |
+| `WEIGHT_DIR` | `<project>/weight` | 체크포인트 저장 경로 |
+| `OUTPUT_DIR` | `<project>/output` | 출력 파일 저장 경로 |
 | `MAP_K` | 5 | Mean Average Precision @ K 계산 K값 |
+
+> **Windows 참고:** `NUM_WORKERS` 기본값이 0이다. 워커 프로세스를 spawn 방식으로 만들기
+> 때문에 4로 두면 학습 스크립트가 워커에서 재실행된다.
 
 **예시:**
 ```bash

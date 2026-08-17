@@ -2,6 +2,30 @@
 
 **목표:** 70+ 테스트 케이스로 코드 정확성 및 논문 준수 검증
 
+## 최근 실행 결과
+
+| 항목 | 값 |
+|------|-----|
+| 실행일 | 2026-08-17 |
+| 하드웨어 | NVIDIA RTX 3060 Laptop 6 GB, CUDA 12.6 |
+| 소프트웨어 | Python 3.14.6 / torch 2.13.0+cu126 |
+| 데이터 | 합성 — 개체 8마리 × 3장 × (train/valid), 종 4종, 256×256 |
+| 축소 설정 | `EPOCHS=1`, `BATCH_SIZE=4`, `NUM_CLASSES=4`, `MAP_K=2` |
+
+| 테스트 | 결과 |
+|--------|------|
+| TC-001 / TC-002 / TC-003 (config·모델 shape) | ✅ |
+| `python -m src.train` (문서에 적힌 명령 그대로) | ✅ |
+| `python -m src.main_hard_mining` | ✅ |
+| `python -m src.test` | ✅ |
+| TC-306 (batch_size 1/2/4/16/64에서 hard negative mining) | ✅ |
+| TC-307 (k 과대 지정 시 clamp) | ✅ |
+| TC-308 (`EPOCHS`가 루프 길이를 결정) | ✅ |
+| Kaggle 리더보드 MAP@5 | ⛔ 미실행 — 실제 데이터셋 미보유 |
+
+> 합성 데이터의 정확도 수치는 의미가 없다. 이 실행은 파이프라인이 끝까지 도는지를
+> 확인하기 위한 것이다.
+
 ---
 
 ## 1. 유닛 테스트
@@ -479,6 +503,77 @@ assert isinstance(train_root_dir, Path), "Paths should be Path objects"
 # 환경변수 미설정 시 기본값 사용
 assert str(train_root_dir).endswith("train") or str(train_root_dir).endswith("dataset/train")
 ```
+
+### 4.6 버그 #7: batch_size 2 이상에서 hard negative mining 크래시
+
+`knn_hard_negatives`가 `dist.topk(k * batch_size, dim=0)`을 수행하는데, dim 0의 크기는
+갤러리 크기인 `2 * batch_size`다. 호출부가 `k=batch_size * 2`를 넘기고 있어 요청 개수가
+`2 * batch_size²`가 되고, `batch_size >= 2`면 항상
+`RuntimeError: selected index k out of range`로 죽었다. 기본 `batch_size`가 64이므로
+학습 진입점이 실행 자체가 불가능했다.
+
+**TC-306: 다양한 batch_size에서 hard negative mining이 동작한다**
+```python
+import torch, numpy as np
+from src.train import knn_hard_negatives
+from src.config import hard_negatives_per_anchor
+
+for bs in (1, 2, 4, 16, 64):
+    anchors = torch.randn(bs, 512)
+    gallery = torch.cat((anchors, torch.randn(bs, 512)))
+    ids = np.array([f"id{i % 3}" for i in range(bs)])
+    neg = knn_hard_negatives(gallery, np.concatenate([ids, ids]),
+                             anchors, ids, k=hard_negatives_per_anchor)
+    assert neg.shape == anchors.shape, (bs, neg.shape)
+print("TC-306 OK")
+```
+- **목적:** 버그 #7 회귀 방지
+- **예상:** 모든 batch_size에서 예외 없이 `(batch_size, 512)` 반환
+
+**TC-307: 후보 수가 갤러리 크기를 넘지 않도록 clamp된다**
+```python
+import torch, numpy as np
+from src.train import knn_hard_negatives
+
+bs = 8
+anchors = torch.randn(bs, 512)
+gallery = torch.cat((anchors, torch.randn(bs, 512)))
+ids = np.array([f"id{i}" for i in range(bs)])
+# k를 과도하게 크게 줘도 topk가 터지지 않아야 한다
+neg = knn_hard_negatives(gallery, np.concatenate([ids, ids]), anchors, ids, k=999)
+assert neg.shape == (bs, 512)
+print("TC-307 OK")
+```
+
+### 4.7 버그 #8: EPOCHS 환경변수가 무시됨
+
+`train.py`와 `main_hard_mining.py`가 `num_epochs = 100`을 하드코딩하고 있어
+`.env.example`에 선언된 `EPOCHS`가 아무 효과도 없었다.
+
+**TC-308: EPOCHS가 실제 루프 길이를 결정한다**
+```python
+import subprocess, sys, os
+env = dict(os.environ, EPOCHS="1", BATCH_SIZE="4", NUM_CLASSES="4")
+out = subprocess.run([sys.executable, "-m", "src.train"],
+                     capture_output=True, text=True, env=env).stdout
+assert "Epoch 1/1" in out, out[-500:]
+print("TC-308 OK")
+```
+- **예상:** `Epoch 1/1`이 출력되고 학습이 1에포크만에 종료
+
+### 4.8 버그 #9: README의 실행 명령이 동작하지 않음
+
+README는 `python -m src.train`을 안내했지만 최상위 스크립트가 절대 import
+(`from config import ...`)를 쓰고 있어 `ModuleNotFoundError: No module named 'config'`로
+실패했다. 상대 import로 통일해 문서와 코드를 일치시켰다.
+
+**TC-309: 문서에 적힌 명령이 그대로 동작한다**
+```bash
+python -m src.train             # 학습
+python -m src.main_hard_mining  # hard negative mining 학습
+python -m src.test              # 평가
+```
+- **예상:** 세 명령 모두 `ModuleNotFoundError` 없이 시작
 
 ---
 
