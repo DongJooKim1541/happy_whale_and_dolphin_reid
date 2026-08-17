@@ -4,14 +4,15 @@ import torch
 import numpy as np
 from tqdm import tqdm
 
-from config import (
+from .config import (
     batch_size, num_valid_triplets, embedding_dimension, num_classes,
     cuda_visible_devices, train_root_dir, valid_root_dir,
-    train_csv_name, valid_csv_name, map_k, weight_dir
+    train_csv_name, valid_csv_name, map_k, weight_dir,
+    new_id_threshold, num_workers, model_name, pretrained
 )
-from models import ResNetTriplet
-from data.whale_dataset import get_dataloaders
-from utils import knn, calculate_map
+from .models import ResNetTriplet
+from .data.whale_dataset import get_dataloaders
+from .utils import knn, calculate_map
 
 
 @torch.no_grad()
@@ -107,10 +108,10 @@ if __name__ == '__main__':
 
     # Load model
     model = ResNetTriplet(
-        model_name="resnet18",
+        model_name=model_name,
         embedding_dimension=embedding_dimension,
         num_classes=num_classes,
-        pretrained=True
+        pretrained=pretrained
     ).to(device)
 
     # Load checkpoint
@@ -131,7 +132,7 @@ if __name__ == '__main__':
         num_train_triplets=num_valid_triplets,
         num_valid_triplets=num_valid_triplets,
         batch_size=batch_size,
-        num_workers=4
+        num_workers=num_workers
     )
 
     # Create gallery
@@ -143,7 +144,7 @@ if __name__ == '__main__':
     print("\nEvaluating on validation set...")
     map_score, num_new, num_matched = evaluate(
         model, gallery_embeddings, gallery_ids,
-        dataloaders['valid'], device, margin=0.1
+        dataloaders['valid'], device, margin=new_id_threshold
     )
 
     print(f"\n=== Results ===")

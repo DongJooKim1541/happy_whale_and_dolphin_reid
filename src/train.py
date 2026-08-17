@@ -6,15 +6,17 @@ import torch.nn as nn
 import numpy as np
 from tqdm import tqdm
 
-from config import (
+from .config import (
     batch_size, num_train_triplets, num_valid_triplets, margin,
     learning_rate, weight_decay, embedding_dimension, num_classes,
     cuda_visible_devices, train_root_dir, valid_root_dir,
-    train_csv_name, valid_csv_name, weight_dir
+    train_csv_name, valid_csv_name, weight_dir, epochs,
+    ce_loss_weight, hard_negatives_per_anchor, num_workers,
+    model_name, pretrained
 )
-from models import ResNetTriplet
-from data.whale_dataset import get_dataloaders
-from utils import TripletLoss, ensure_output_dirs
+from .models import ResNetTriplet
+from .data.whale_dataset import get_dataloaders
+from .utils import TripletLoss, ensure_output_dirs
 
 
 def forward_pass(imgs: torch.Tensor, model: nn.Module) -> Tuple[torch.Tensor, torch.Tensor]:
@@ -56,7 +58,10 @@ def knn_hard_negatives(gallery_embeddings: torch.Tensor, gallery_ids: np.ndarray
         gallery_embeddings.unsqueeze(1) - anchor_embeddings.unsqueeze(0),
         dim=2, p=2
     )
-    _, indices = dist.topk(k * batch_size, largest=False, dim=0)
+    # topk cannot request more entries than the gallery holds; without this clamp
+    # any k above 1 raises "selected index k out of range".
+    num_candidates = min(k * batch_size, dist.shape[0])
+    _, indices = dist.topk(num_candidates, largest=False, dim=0)
     indices = indices.cpu()
 
     gallery_ids = np.array(gallery_ids)
@@ -124,7 +129,7 @@ def train_epoch(model: nn.Module, optimizer: torch.optim.Optimizer,
         negative_embeddings = knn_hard_negatives(
             gallery, gallery_ids,
             anchor_embeddings, batch_sample['individual_id'],
-            k=batch_size * 2
+            k=hard_negatives_per_anchor
         ).to(device)
 
         # Calculate losses
@@ -132,7 +137,7 @@ def train_epoch(model: nn.Module, optimizer: torch.optim.Optimizer,
         ce_loss_val = ce_loss(anchor_preds, anchor_species) + ce_loss(positive_preds, positive_species)
 
         # Combined loss
-        total_loss = 0.01 * ce_loss_val + t_loss
+        total_loss = ce_loss_weight * ce_loss_val + t_loss
 
         # Backward pass
         optimizer.zero_grad()
@@ -163,10 +168,10 @@ if __name__ == '__main__':
 
     # Model, optimizer, loss
     model = ResNetTriplet(
-        model_name="resnet18",
+        model_name=model_name,
         embedding_dimension=embedding_dimension,
         num_classes=num_classes,
-        pretrained=True
+        pretrained=pretrained
     ).to(device)
 
     optimizer = torch.optim.Adam(
@@ -187,11 +192,11 @@ if __name__ == '__main__':
         num_train_triplets=num_train_triplets,
         num_valid_triplets=num_valid_triplets,
         batch_size=batch_size,
-        num_workers=4
+        num_workers=num_workers
     )
 
     # Training loop
-    num_epochs = 100
+    num_epochs = epochs
     for epoch in range(num_epochs):
         triplet_loss, ce_loss, acc = train_epoch(
             model, optimizer, dataloaders['train'],
